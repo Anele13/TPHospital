@@ -27,28 +27,62 @@
             </div>
         </div>
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12 offset-2">
-                    <form class="form-inline" method="POST" action="{{ url_for('iniciar_simulacion')}}">
-                        {% if contexto %}
-                            <input required type="number" value="{{contexto['cant_experimentos']}}" class="form-control sm-1 mr-sm-1"  name="cant_experimentos" placeholder="Cant. Experimentos" data-toggle="tooltip" data-placement="top" title="Cant. Experimentos">
-                            <input required type="number" value="{{contexto['cant_corridas']}}" class="form-control sm-1 mr-sm-1"  name="cant_corridas" placeholder="Cant. Corridas">
-                            <input required type="number" value="{{contexto['cant_pacientes']}}" class="form-control sm-1 mr-sm-1"  name="cant_pacientes" placeholder="Cant. Pacientes">
-                            <input required type="number" value="{{contexto['cant_quirofanos']}}" class="form-control sm-1 mr-sm-1"  name="cant_quirofanos" placeholder="Cant. Quirofanos">
-                            <input required type="number" value="{{contexto['cant_camas']}}" class="form-control sm-1 mr-sm-1"  name="cant_camas" placeholder="Cant. Camas">
-                        {% else %}
+            
+                
+                <form  method="POST" action="{{ url_for('iniciar_simulacion')}}">
+                    {% if contexto %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="">Apertura</label>
+                                <input required type="number" value="{{contexto['apertura']}}" class="form-control "  name="apertura" placeholder="Horario Apertura">
+                                <label for="">Cierre</label>
+                                <input required type="number" value="{{contexto['cierre']}}" class="form-control sm-1 mr-sm-1"  name="cierre" placeholder="Horario Cierre">
+                                <label for="">Cant. Experimentos</label>
+                                <input required type="number" value="{{contexto['cant_experimentos']}}" class="form-control sm-1 mr-sm-1"  name="cant_experimentos" placeholder="Cant. Experimentos" data-toggle="tooltip" data-placement="top" title="Cant. Experimentos">
+                                <label for="">Cant. Corridas</label>
+                                <input required type="number" value="{{contexto['cant_corridas']}}" class="form-control sm-1 mr-sm-1"  name="cant_corridas" placeholder="Cant. Corridas">
+                            </div> 
+                            <div class="col-md-6">
+                                <label for="">Cant. Pacientes</label>
+                                <input required type="number" value="{{contexto['cant_pacientes']}}" class="form-control sm-1 mr-sm-1"  name="cant_pacientes" placeholder="Cant. Pacientes">
+                                <label for="">Cant. Quirofanos</label>
+                                <input required type="number" value="{{contexto['cant_quirofanos']}}" class="form-control sm-1 mr-sm-1"  name="cant_quirofanos" placeholder="Cant. Quirofanos">
+                                <label for="">Cant. Camas</label>
+                                <input required type="number" value="{{contexto['cant_camas']}}" class="form-control sm-1 mr-sm-1"  name="cant_camas" placeholder="Cant. Camas">
+                                <label for="indicador">Pacientes solo operacion</label>
+                                <input type="checkbox" class="form-check-input" name="indicador">
+                            </div>
+                        </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="">Apertura</label>
+                            <input required type="number" class="form-control sm-1 mr-sm-1"  name="apertura" placeholder="Horario Apertura">
+                            <label for="">Cierre</label>
+                            <input required type="number" class="form-control sm-1 mr-sm-1"  name="cierre" placeholder="Horario Cierre">
+                            <label for="">Cant. Experimentos</label>
                             <input required type="number" class="form-control sm-1 mr-sm-1"  name="cant_experimentos" placeholder="Cant. Experimentos" data-toggle="tooltip" data-placement="top" title="Cant. Experimentos">
+                            <label for="">Cant. Corridas</label>
                             <input required type="number" class="form-control sm-1 mr-sm-1"  name="cant_corridas" placeholder="Cant. Corridas">
+                        </div> 
+                        <div class="col-md-6">
+                            <label for="">Cant. Pacientes</label>
                             <input required type="number" class="form-control sm-1 mr-sm-1"  name="cant_pacientes" placeholder="Cant. Pacientes">
+                            <label for="">Cant. Quirofanos</label>
                             <input required type="number" class="form-control sm-1 mr-sm-1"  name="cant_quirofanos" placeholder="Cant. Quirofanos">
-                            <input required type="number" class="form-control sm-1 mr-sm-1"  name="cant_camas" placeholder="Cant. Camas">
-                        {%endif%}
-                        <label for="indicador">Pacientes solo operacion</label><br>
-                        <input type="checkbox"  name="indicador">
-                        <button required class="btn btn-warning">Simular</button>
-                    </form>
-                </div>
-            </div>
+                            <label for="">Cant. Camas</label>
+                            <input required type="number" class="form-control"  name="cant_camas" placeholder="Cant. Camas">
+                            <label for="indicador">Pacientes solo operacion</label>
+                            <input type="checkbox"  name="indicador">
+                        </div>
+                    </div>
+                    {%endif%}
+                    <div class="pull-rigth offset-md-11">
+                        <button required class="btn btn-warning ">Simular</button>
+                    </div>
+                </form>
+            
+            
         </div>
         {% if contexto %}
             <hr>
@@ -68,39 +102,41 @@
             <div class="container-fluid">
                 <!-- esperas TOTALES y camas libres -->
                 <div class="row">
-                    <div class="col-md-3 offset-md-1">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
                             <canvas id="myChart" width="400" height="300"></canvas>
                         </div>
                     </div>
-                    <div class="col-md-6 offset-md-2">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
                             <canvas id="chartCamas" width="400" height="300"></canvas>
                         </div>
                     </div>
                 </div>
+                <br>
                 <!-- Esperas camas y quirofanos-->
                 <div class="row">
-                    <div class="col-md-3 offset-md-1">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
                             <canvas id="myChartEsperasCamas" width="400" height="300"></canvas>
                         </div>
                     </div>
-                    <div class="col-md-6 offset-md-2">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
                             <canvas id="myChartEsperasQuirofanos" width="400" height="300"></canvas>
                         </div>
                     </div>
                 </div>
+                <br>
                 <div class="row">
-                    <div class="col-md-6 offset-md-2">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
-                            <canvas id="myChartPacientesNoAtendidos" width="400" height="300"></canvas>
+                            <canvas id="myChartPacientesNoAtendidos"></canvas>
                         </div>
                     </div>
-                    <div class="col-md-6 offset-md-2">
+                    <div class="col-md-6 d-flex justify-content-center">
                         <div class="chart01">
-                            <canvas id="myChartPacientesNoOperados" width="400" height="300"></canvas>
+                            <canvas id="myChartPacientesNoOperados"></canvas>
                         </div>
                     </div>
                 </div>
@@ -128,7 +164,7 @@
             data: {
                 labels: lista_esperas,
                 datasets: [{
-                    label: 'Promedio pacientes no operados '+promedio_esperas.toFixed(2),
+                    label: 'Promedio de pacientes no operados '+promedio_esperas.toFixed(2),
                     data: lista_esperas,
                     borderWidth: 1
                 }]
@@ -158,7 +194,7 @@
             data: {
                 labels: lista_esperas,
                 datasets: [{
-                    label: 'Promedio pacientes no atendidos '+promedio_esperas.toFixed(2),
+                    label: 'Promedio de pacientes no atendidos '+promedio_esperas.toFixed(2),
                     data: lista_esperas,
                     borderWidth: 1
                 }]
@@ -188,7 +224,7 @@
             data: {
                 labels: lista_esperas,
                 datasets: [{
-                    label: 'Promedio de esperas quirofanos '+promedio_esperas.toFixed(2),
+                    label: 'Promedio de esperas por un quirofano '+promedio_esperas.toFixed(2),
                     data: lista_esperas,
                     borderWidth: 1
                 }]
@@ -219,7 +255,7 @@
             data: {
                 labels: lista_esperas,
                 datasets: [{
-                    label: 'Promedio de esperas camas '+promedio_esperas.toFixed(2),
+                    label: 'Promedio de esperas por una cama '+promedio_esperas.toFixed(2),
                     data: lista_esperas,
                     borderWidth: 1
                 }]
@@ -249,7 +285,7 @@
             data: {
                 labels: lista_esperas,
                 datasets: [{
-                    label: 'Promedio de esperas totales '+promedio_esperas.toFixed(2),
+                    label: 'Promedio de esperas totales (quirofanos y camas) '+promedio_esperas.toFixed(2),
                     data: lista_esperas,
                     borderWidth: 1
                 }]
@@ -302,7 +338,8 @@
         //var tiempo_simulacion = '{{contexto["tiempo_total"]}}'
         var lista_esperas = JSON.parse('{{contexto["ocupacion_quirofanos"] | safe}}')
         jQuery.each(lista_esperas, function(i, val) {
-            $('.quirofanos').append("<div class='chart01 col-md-3'>"+"Quirofano "+i+
+            $('.quirofanos').append("<div class='chart01 col-md-3 d-flex justify-content-center'>"+
+                                        "<h5>Quirofano "+i+" </h5>"+
                                         "<canvas id='myChart"+i+"'></canvas>"+
                                     "</div>");
             var ctx = document.getElementById('myChart'+i).getContext('2d');

@@ -130,9 +130,6 @@ def agregar_eventos_llegada(fel, prefijo, cantidad_pacientes, solo_operacion):
         contador_tipo_paciente[tipoPaciente] = contador_tipo_paciente[tipoPaciente]+1
         paciente = Paciente("f{prefijo}-C{id_paciente}",tipoPaciente)
 
-        evento = Evento(paciente.prefijo, "INGRESA_PACIENTE", paciente, paciente.tiempoLlegada, 0)
-        agregarEventoAFel(evento, fel)
-
         if solo_operacion:
             if (tipoPaciente == "OPERACION"):
                 evento = Evento(paciente.prefijo, "INGRESA_PACIENTE", paciente, paciente.tiempoLlegada, 0)
@@ -278,10 +275,9 @@ def simulacion(indicador, cant_experimentos, cant_corridas, cant_pacientes, cant
             fel, contador_paciente = agregar_eventos_llegada(fel, prefijo, cant_pacientes, indicador)
             cola_camas = []
             cola_quirofanos = []
-
             reloj = list(sorted(fel))[0] # Iniciamos/reiniciamos el reloj
+
             while reloj <= tope_reloj and len(fel) != 0:
-                # TODO: checkear el horario de apertura del hospital
                 # Obtenemos todos los eventos diferenciados desde la lista de eventos
                 eventos_internarse, eventos_operarse, eventos_fin_internacion, eventos_fin_operacion = getEventosPorCondicion(fel[reloj])
                 
@@ -342,7 +338,7 @@ def simulacion(indicador, cant_experimentos, cant_corridas, cant_pacientes, cant
                             cola_camas.append(e)
                 else:#Ponemos a los pacientes en espera de una cama o quirofano
                     if not hayCamaLibre(lista_camas):
-                        for e in eventos_operarse:
+                        for e in eventos_internarse:
                             cola_camas.append(e)
                     else:
                         for e in eventos_operarse:
@@ -358,9 +354,6 @@ def simulacion(indicador, cant_experimentos, cant_corridas, cant_pacientes, cant
                         fel = modificar_horario_eventos(fel,tope_reloj)
 
                 pacientes_no_atendidos.append(len(cola_camas))
-                #print("............")
-                #print(cola_quirofanos)
-                #print("............")
                 pacientes_no_operados.append(len(cola_quirofanos))
 
             # Finalizó el procesamiento para esta corrida, hacemos la estadistica necesaria por corrida aqui
@@ -376,11 +369,11 @@ def simulacion(indicador, cant_experimentos, cant_corridas, cant_pacientes, cant
         lista_pacientes_no_atendidos.append(round(sum(pacientes_no_atendidos)/len(pacientes_no_atendidos),2))
         lista_pacientes_no_operados.append(round(sum(pacientes_no_operados)/len(pacientes_no_operados),2))
         if (espera_quirofanos and espera_camas):
-            espera = stats.mean(espera_camas) + stats.mean(espera_quirofanos)
-            esperas_camas.append(stats.mean(espera_camas))
-            esperas_quirofanos.append(stats.mean(espera_quirofanos))
+            espera = round((stats.mean(espera_camas) + stats.mean(espera_quirofanos)),2)
+            esperas_camas.append(round(stats.mean(espera_camas),2))
+            esperas_quirofanos.append(round(stats.mean(espera_quirofanos),2))
             esperas.append(espera)
-        camas_desocupadas.append(cant_camas_desocupadas / cant_corridas)
+        camas_desocupadas.append(round((cant_camas_desocupadas / cant_corridas),2))
 
         
     return lista_pacientes_no_operados, lista_pacientes_no_atendidos, esperas, esperas_camas, esperas_quirofanos, camas_desocupadas, lista_quirofanos, contador_tipo_paciente
@@ -393,17 +386,20 @@ def iniciar_simulacion():
     cant_pacientes = int(request.form.get('cant_pacientes'))
     cant_quirofanos = int(request.form.get('cant_quirofanos'))
     cant_camas = int(request.form.get('cant_camas'))
+    cierre = int(request.form.get('cierre'))
+    apertura = int(request.form.get('apertura'))
     indicador = request.form.get('indicador')
     if (indicador):
         indicador = True
     else:
         indicador = False
-    cierre = 20 * 60
-    apertura = 8 * 60
+    
     indicador = False
 
     lista_pacientes_no_operados, lista_pacientes_no_atendidos, esperas, esperas_camas, esperas_quirofanos, camas_desocupadas, lista_quirofanos, contador_tipo_paciente = simulacion(indicador, cant_experimentos,cant_corridas, cant_pacientes, cant_quirofanos, cant_camas, apertura, cierre)
-    tiempo_total = np.abs((cierre - apertura) * (cant_experimentos * cant_corridas))
+    _cierre = cierre * 60
+    _apertura = apertura * 60
+    tiempo_total = np.abs((_cierre - _apertura) * (cant_experimentos * cant_corridas))
     ocupacion_quirofanos = {q.id: round(((q.tiempoOcupacion/tiempo_total)*100),2) for q in lista_quirofanos}
 
 
@@ -423,8 +419,9 @@ def iniciar_simulacion():
                 "cant_corridas":cant_corridas,
                 "cant_pacientes":cant_pacientes,
                 "cant_quirofanos":cant_quirofanos,
-                "cant_camas":cant_camas}
-
+                "cant_camas":cant_camas,
+                "apertura":apertura,
+                "cierre":cierre}
     return render_template('index.html',contexto=contexto, ocupacion_quirofanos=json.dumps(ocupacion_quirofanos))
 
 
