@@ -130,9 +130,6 @@ def agregar_eventos_llegada(fel, prefijo, cantidad_pacientes, solo_operacion):
         contador_tipo_paciente[tipoPaciente] = contador_tipo_paciente[tipoPaciente]+1
         paciente = Paciente("f{prefijo}-C{id_paciente}",tipoPaciente)
 
-        evento = Evento(paciente.prefijo, "INGRESA_PACIENTE", paciente, paciente.tiempoLlegada, 0)
-        agregarEventoAFel(evento, fel)
-
         if solo_operacion:
             if (tipoPaciente == "OPERACION"):
                 evento = Evento(paciente.prefijo, "INGRESA_PACIENTE", paciente, paciente.tiempoLlegada, 0)
